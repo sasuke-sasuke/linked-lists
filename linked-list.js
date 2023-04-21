@@ -100,12 +100,17 @@ class LinkedList {
   /** setAt(idx, val): set val at idx to val */
 
   setAt(idx, val) {
-    let foundNode = this.getAt(idx);
-    if (foundNode) {
-      foundNode.val = val;
-      return true;
+    if (idx < 0 || idx >= this.length) {
+      return undefined;
     }
-    return false;
+    let counter = 0;
+    let current = this.head
+    while (counter !== idx) {
+      current = current.next;
+      counter++;
+    }
+    current.val = val;
+    return current.val;
   }
 
 
@@ -113,41 +118,50 @@ class LinkedList {
   /** insertAt(idx, val): add node w/val before idx. */
 
     insertAt(idx, val) {
-      if (idx < 0 || idx > this.length) {
-        return false;
-      }
-      if (idx === 0) {
+      if(!this.length){
         this.unshift(val);
-        return true;
+        return
       }
-      if (idx === this.length) {
-        this.push(val);
-        return true;
+      if(idx === this.length){
+        this.push(val)
+        return
       }
       const newNode = new Node(val);
-      let prev = this.getAt(idx - 1);
-      let temp = prev.next;
+      let counter = 0;
+      let current = this.head;
+      let prev = null;
+      while (counter !== idx) {
+        counter++;
+        prev = current;
+        current = current.next;
+      }
+      newNode.next = current;
       prev.next = newNode;
-      newNode.next = temp;
       this.length++;
-      return true;
     }
 
   /** removeAt(idx): return & remove item at idx, */
 
   removeAt(idx) {
-    if (idx < 0 || idx >= this.length) {
-      return undefined;
+    if (idx < 0 || idx > this.length) {
+      return new Error('Index out of range');
     }
     if (idx === 0) {
       return this.shift();
     }
-    if (idx === this.length - 1) {
+    if (idx === this.length) {
       return this.pop();
     }
-    let prev = this.getAt(idx - 1);
-    let removed = prev.next;
-    prev.next = removed.next;
+    let counter = 0;
+    let current = this.head;
+    let prev = null;
+    while (counter!== idx) {
+      counter++;
+      prev = current;
+      current = current.next;
+    }
+    let removed = current;
+    prev.next = current.next;
     this.length--;
     return removed.val;
   }
@@ -157,7 +171,7 @@ class LinkedList {
 
   average() {
     if (!this.head) {
-      return null;
+      return 0;
     }
     let sum = 0;
     let count = 0;
